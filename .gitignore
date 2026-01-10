@@ -144,6 +144,9 @@ test-results/
 *.webm
 test_videos/
 
+# Dataset directory (downloaded videos)
+data/
+
 # Results cache
 results/*.json
 results/*.csv
