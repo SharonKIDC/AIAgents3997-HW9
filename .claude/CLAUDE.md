@@ -19,12 +19,12 @@ PreProject
 - agents/python-env-setup.md
 
 TaskLoop
-- agents/python-env-setup.md (creates/updates venv and requirements files)
 - agents/implementer.md
 - agents/quality-commenter.md
 - agents/unit-test-writer.md
 - agents/edge-case-defender.md
 - agents/expected-results-recorder.md
+- agents/python-env-setup.md (creates/updates venv and requirements files)
 - agents/readme-updater.md
 - agents/prompt-log-updater.md
 - agents/agent-documentor.md
@@ -61,12 +61,12 @@ PreProject
 7. prompt-log-initializer
 
 TaskLoop
-1. python-env-setup (creates/updates requirements.txt, requirements-dev.txt, venv)
-2. implementer
-3. quality-commenter
-4. unit-test-writer
-5. edge-case-defender
-6. expected-results-recorder
+1. implementer
+2. quality-commenter
+3. unit-test-writer
+4. edge-case-defender
+5. expected-results-recorder
+6. python-env-setup (creates/updates requirements.txt, requirements-dev.txt, venv)
 7. readme-updater (conditional)
 8. prompt-log-updater
 9. agent-documentor (optional)
