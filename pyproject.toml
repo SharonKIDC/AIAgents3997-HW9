@@ -93,6 +93,7 @@ skip_gitignore = true
 [tool.pylint.main]
 py-version = "3.9"
 ignore = ["tests"]
+extension-pkg-allow-list = ["cv2"]
 
 [tool.pylint.format]
 max-line-length = 88
@@ -102,7 +103,11 @@ disable = [
     "missing-module-docstring",
     "missing-class-docstring",
     "missing-function-docstring",
+    "duplicate-code",
 ]
+
+[tool.pylint.typecheck]
+generated-members = ["cv2.*"]
 
 [tool.ruff]
 line-length = 88
