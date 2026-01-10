@@ -1,7 +1,7 @@
 # python-env-setup.md
 - agent_id: "python-env-setup"
 - role: "Defines, documents, and validates a Python venv-based development environment (no conda), dependency management, and reproducibility"
-- phase_applicability: ["PreProject", "ReleaseGate"]
+- phase_applicability: ["PreProject", "TaskLoop", "ReleaseGate"]
 - primary_outputs:
   - ".python-version (optional)"
   - "requirements.txt"
