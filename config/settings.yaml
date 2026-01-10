@@ -1,0 +1,60 @@
+# DeepFake Detector Configuration Settings
+# This file contains default settings that can be overridden by environment variables
+
+detection:
+  # Default model for detection
+  model: efficientnet
+
+  # Confidence threshold (0.0 - 1.0)
+  confidence_threshold: 0.5
+
+  # Number of frames to analyze per video
+  num_frames: 30
+
+  # Frame sampling rate (every Nth frame)
+  sample_rate: 10
+
+video:
+  # Maximum video duration to process (seconds)
+  max_duration: 300
+
+  # Target frame size for processing
+  frame_size: [224, 224]
+
+  # Supported video formats
+  supported_formats:
+    - mp4
+    - avi
+    - mov
+    - mkv
+    - webm
+
+analysis:
+  # Enable face detection before analysis
+  face_detection: true
+
+  # Analyze temporal consistency
+  temporal_analysis: true
+
+  # Check for GAN artifacts
+  artifact_detection: true
+
+  # Analyze audio-visual sync
+  av_sync_check: false
+
+output:
+  # Include detailed reasoning in output
+  include_reasoning: true
+
+  # Generate visualization of detected features
+  generate_visualization: false
+
+  # Output format: text, json, or both
+  format: text
+
+logging:
+  # Logging level
+  level: INFO
+
+  # Log to file
+  file: null
