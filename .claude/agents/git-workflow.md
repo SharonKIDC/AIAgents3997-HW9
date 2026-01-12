@@ -513,6 +513,63 @@ A well-managed workflow shows:
 - ✅ Structured commit messages throughout
 - ✅ No direct commits to main (all via agent branches)
 
+## Parallel Development with Worktrees
+
+### Overview
+
+Git worktrees enable **parallel development** by allowing multiple Claude sessions to work simultaneously on independent development vectors. Each worktree is a separate working directory with its own branch.
+
+### When to Offer Parallel Development
+
+The git-workflow agent SHOULD proactively suggest splitting work into parallel worktrees when:
+
+1. **Multiple Independent Modules**: Task involves work across modules that don't depend on each other
+2. **Large Feature Set**: User requests multiple features that can be developed independently
+3. **Time-Critical Work**: User needs faster delivery and has capacity for parallel sessions
+4. **Refactoring + Features**: Codebase refactoring can run parallel to new feature development
+
+### 5-Stage MCP Architecture Worktrees
+
+Projects using 5-Stage MCP Architecture have pre-configured worktrees:
+
+| Stage | Worktree | Branch |
+|-------|----------|--------|
+| Infrastructure | `worktrees/infrastructure` | infrastructure |
+| Database | `worktrees/database` | database |
+| MCP Server | `worktrees/mcp-server` | mcp-server |
+| Communication | `worktrees/communication` | communication |
+| UI/SDK | `worktrees/ui-sdk` | ui-sdk |
+
+### Offering Parallel Work to User
+
+When analyzing user requests, evaluate if work can be split across worktrees:
+
+1. **Analyze Dependencies**: Identify which stages/modules are independent
+2. **Propose Split**: Offer to split work into parallel streams
+3. **Create Worktrees**: Set up worktrees for each parallel stream
+4. **Instruct User**: Guide user to open multiple Claude terminals, one per worktree
+5. **Merge Strategy**: Define order for merging completed streams back to main
+
+### Worktree Commands
+
+```bash
+# List worktrees
+git worktree list
+
+# Create new worktree
+git worktree add ../worktrees/{name} -b {branch-name}
+
+# Remove worktree after merge
+git worktree remove ../worktrees/{name}
+```
+
+### Merge Protocol
+
+After parallel work completes:
+1. Merge streams in dependency order
+2. Use `--no-ff` to preserve history
+3. Clean up worktrees and branches
+
 ## Notes
 
 ### Assumptions
@@ -520,11 +577,13 @@ A well-managed workflow shows:
 - Orchestrator invokes git-workflow at correct stages
 - Agents produce file changes that can be committed
 - No external git operations interfere with workflow
+- User has capacity to run multiple Claude sessions for parallel work
 
 ### Limitations
 - Cannot enforce workflow if orchestrator bypasses it
 - Requires orchestrator modifications to invoke pre/post hooks
 - Minimum commit target may need adjustment based on project complexity
+- Parallel work requires user to manage multiple terminals
 
 ### Follow-ups
 - Consider automated commit message generation from agent outputs

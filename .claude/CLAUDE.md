@@ -19,17 +19,18 @@ PreProject
 - agents/python-env-setup.md
 
 TaskLoop
+- agents/python-env-setup.md (creates/updates venv and requirements files)
 - agents/implementer.md
 - agents/quality-commenter.md
 - agents/unit-test-writer.md
 - agents/edge-case-defender.md
 - agents/expected-results-recorder.md
-- agents/python-env-setup.md (creates/updates venv and requirements files)
 - agents/readme-updater.md
 - agents/prompt-log-updater.md
 - agents/agent-documentor.md
 
 ResearchLoop
+- agents/research-agent.md (end-to-end ML research: exploration, planning, experimentation, evaluation, reporting)
 - agents/sensitivity-analysis.md
 - agents/results-notebook.md
 - agents/visualization-curator.md
@@ -61,21 +62,22 @@ PreProject
 7. prompt-log-initializer
 
 TaskLoop
-1. implementer
-2. quality-commenter
-3. unit-test-writer
-4. edge-case-defender
-5. expected-results-recorder
-6. python-env-setup (creates/updates requirements.txt, requirements-dev.txt, venv)
+1. python-env-setup (creates/updates requirements.txt, requirements-dev.txt, venv)
+2. implementer
+3. quality-commenter
+4. unit-test-writer
+5. edge-case-defender
+6. expected-results-recorder
 7. readme-updater (conditional)
 8. prompt-log-updater
 9. agent-documentor (optional)
 
 ResearchLoop
-1. sensitivity-analysis
-2. results-notebook
-3. visualization-curator
-4. prompt-log-updater
+1. research-agent (orchestrates full research workflow)
+2. sensitivity-analysis
+3. results-notebook
+4. visualization-curator
+5. prompt-log-updater
 
 ReleaseGate
 1. python-packager
