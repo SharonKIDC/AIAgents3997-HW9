@@ -87,7 +87,7 @@ def print_result_text(result, video_path: str, processing_time: float) -> None:
     click.echo(f"  - Video analyzed: {video_path}")
     click.echo(f"  - Frames processed: {len(result.frame_results)}")
     click.echo(f"  - Processing time: {processing_time:.2f} seconds")
-    click.echo(f"  - Model: vit-deepfake (ViT-based HuggingFace detector)")
+    click.echo("  - Model: vit-deepfake (ViT-based HuggingFace detector)")
     click.echo("")
 
     # Interpretation guide
