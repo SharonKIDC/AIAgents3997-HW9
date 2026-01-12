@@ -53,7 +53,7 @@
       "files_changed": ["docs/development/PROMPT_LOG.md"]
     }
   ],
-  "total_commits": 14,
+  "total_commits": 31,
   "target_commits": 15,
   "gates_passed": {
     "packaging_valid": true,
@@ -62,7 +62,8 @@
     "no_secrets_in_code": true,
     "final_checklist_pass": true,
     "readme_updated_if_needed": true,
-    "prompt_log_updated": true
+    "prompt_log_updated": true,
+    "minimum_commits_target": true
   },
   "gates_failed": {}
 }
