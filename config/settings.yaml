@@ -3,7 +3,8 @@
 
 detection:
   # Default model for detection
-  model: efficientnet
+  # Options: vit-deepfake (recommended), efficientnet, xception
+  model: vit-deepfake
 
   # Confidence threshold (0.0 - 1.0)
   confidence_threshold: 0.5
@@ -13,6 +14,12 @@ detection:
 
   # Frame sampling rate (every Nth frame)
   sample_rate: 10
+
+  # Model cache directory
+  cache_dir: ./models/cache
+
+  # Batch size for inference
+  batch_size: 8
 
 video:
   # Maximum video duration to process (seconds)
@@ -52,9 +59,19 @@ output:
   # Output format: text, json, or both
   format: text
 
+  # Enable verbose output
+  verbose: false
+
+gpu:
+  # Use GPU for inference if available
+  enabled: true
+
+  # GPU device ID (for multi-GPU systems)
+  device_id: 0
+
 logging:
-  # Logging level
+  # Logging level: DEBUG, INFO, WARNING, ERROR
   level: INFO
 
-  # Log to file
+  # Log to file (null for stdout only)
   file: null
