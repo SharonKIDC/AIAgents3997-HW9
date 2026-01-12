@@ -7,8 +7,12 @@ from typing import Any, Optional
 
 import cv2
 import numpy as np
+from PIL import Image
 
 logger = logging.getLogger(__name__)
+
+# HuggingFace model for deepfake detection (from research findings)
+HUGGINGFACE_MODEL = "prithivMLmods/Deep-Fake-Detector-v2-Model"
 
 
 @dataclass
@@ -49,7 +53,7 @@ class DeepFakeDetector:
 
     def __init__(
         self,
-        model_name: str = "efficientnet",
+        model_name: str = "vit-deepfake",
         device: str = "auto",
         cache_dir: str = "./models/cache",
     ) -> None:
@@ -57,7 +61,7 @@ class DeepFakeDetector:
         Initialize the deepfake detector.
 
         Args:
-            model_name: Name of the detection model.
+            model_name: Name of the detection model ('vit-deepfake', 'efficientnet').
             device: Device to run inference on (cpu/cuda/auto).
             cache_dir: Directory to cache model weights.
         """
@@ -65,8 +69,10 @@ class DeepFakeDetector:
         self.device = self._resolve_device(device)
         self.cache_dir = Path(cache_dir)
         self._model: Any = None
+        self._processor: Any = None
         self._model_loaded = False
         self._transform: Any = None
+        self._use_huggingface = model_name == "vit-deepfake"
 
     def _resolve_device(self, device: str) -> str:
         """Resolve 'auto' device to actual device."""
@@ -88,12 +94,16 @@ class DeepFakeDetector:
         logger.info("Loading deepfake detection model: %s", self.model_name)
 
         try:
-            self._load_pytorch_model()
+            if self._use_huggingface:
+                self._load_huggingface_model()
+            else:
+                self._load_pytorch_model()
             self._model_loaded = True
             logger.info("Model loaded successfully on device: %s", self.device)
-        except ImportError:
+        except ImportError as exc:
             logger.warning(
-                "PyTorch not available. Using statistical analysis fallback."
+                "Required library not available: %s. Using statistical analysis fallback.",
+                exc,
             )
             self._model_loaded = False
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -102,6 +112,32 @@ class DeepFakeDetector:
                 exc,
             )
             self._model_loaded = False
+
+    def _load_huggingface_model(self) -> None:
+        """Load pretrained ViT model from HuggingFace for deepfake detection."""
+        # pylint: disable=import-outside-toplevel
+        from transformers import AutoImageProcessor, AutoModelForImageClassification
+
+        logger.info("Loading HuggingFace model: %s", HUGGINGFACE_MODEL)
+
+        self._processor = AutoImageProcessor.from_pretrained(
+            HUGGINGFACE_MODEL,
+            cache_dir=self.cache_dir,
+        )
+        self._model = AutoModelForImageClassification.from_pretrained(
+            HUGGINGFACE_MODEL,
+            cache_dir=self.cache_dir,
+        )
+
+        # Move to device if CUDA available
+        if self.device.startswith("cuda"):
+            self._model = self._model.to(self.device)
+
+        self._model.eval()
+        logger.info(
+            "HuggingFace ViT model loaded: %d parameters",
+            sum(p.numel() for p in self._model.parameters()),
+        )
 
     def _load_pytorch_model(self) -> None:
         """Load PyTorch-based model."""
@@ -153,8 +189,48 @@ class DeepFakeDetector:
             return []
 
         if self._model_loaded:
+            if self._use_huggingface:
+                return self._predict_with_huggingface(face_crops)
             return self._predict_with_model(face_crops)
         return self._predict_with_fallback(face_crops)
+
+    def _predict_with_huggingface(self, face_crops: list) -> list[float]:
+        """Run prediction using HuggingFace ViT model."""
+        import torch  # pylint: disable=import-outside-toplevel
+
+        scores = []
+
+        with torch.no_grad():
+            for crop in face_crops:
+                # Convert numpy array to PIL Image
+                if isinstance(crop.image, np.ndarray):
+                    pil_image = Image.fromarray(crop.image)
+                else:
+                    pil_image = crop.image
+
+                # Preprocess with HuggingFace processor
+                inputs = self._processor(images=pil_image, return_tensors="pt")
+
+                if self.device.startswith("cuda"):
+                    inputs = {k: v.to(self.device) for k, v in inputs.items()}
+
+                # Forward pass
+                outputs = self._model(**inputs)
+                probs = torch.nn.functional.softmax(outputs.logits, dim=1)
+
+                # Get fake probability
+                # Model labels: 0=Real, 1=Fake (check model config)
+                fake_idx = 1
+                if hasattr(self._model.config, "id2label"):
+                    for idx, label in self._model.config.id2label.items():
+                        if "fake" in label.lower():
+                            fake_idx = int(idx)
+                            break
+
+                fake_prob = probs[0, fake_idx].item()
+                scores.append(fake_prob)
+
+        return scores
 
     def _predict_with_model(self, face_crops: list) -> list[float]:
         """Run prediction using the loaded model."""
