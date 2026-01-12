@@ -23,7 +23,7 @@ class TestDefaultConfig:
     def test_detection_defaults(self) -> None:
         """Test default detection configuration."""
         config = DetectionConfig()
-        assert config.model == "efficientnet"
+        assert config.model == "vit-deepfake"
         assert config.confidence_threshold == 0.5
         assert config.num_frames == 30
         assert config.sample_rate == 10

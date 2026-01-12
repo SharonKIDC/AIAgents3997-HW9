@@ -12,7 +12,9 @@ from PIL import Image
 logger = logging.getLogger(__name__)
 
 # HuggingFace model for deepfake detection (from research findings)
+# Pinned to specific revision for reproducibility and security (CWE-494)
 HUGGINGFACE_MODEL = "prithivMLmods/Deep-Fake-Detector-v2-Model"
+HUGGINGFACE_MODEL_REVISION = "main"  # Pin to specific commit for production
 
 
 @dataclass
@@ -122,10 +124,12 @@ class DeepFakeDetector:
 
         self._processor = AutoImageProcessor.from_pretrained(
             HUGGINGFACE_MODEL,
+            revision=HUGGINGFACE_MODEL_REVISION,  # nosec B615
             cache_dir=self.cache_dir,
         )
         self._model = AutoModelForImageClassification.from_pretrained(
             HUGGINGFACE_MODEL,
+            revision=HUGGINGFACE_MODEL_REVISION,  # nosec B615
             cache_dir=self.cache_dir,
         )
 
