@@ -67,7 +67,9 @@ def print_result_text(result, video_path: str, processing_time: float) -> None:
     for indicator in result.indicators:
         click.echo("")
         if indicator.detected:
-            click.secho(f"  [DETECTED] {indicator.name.upper()}", fg="yellow", bold=True)
+            click.secho(
+                f"  [DETECTED] {indicator.name.upper()}", fg="yellow", bold=True
+            )
         else:
             click.secho(f"  [OK] {indicator.name.upper()}", fg="green")
 
@@ -107,74 +109,40 @@ def _print_indicator_explanation(indicator, result) -> None:
         click.echo(
             f"    The ViT (Vision Transformer) model analyzed {total_frames} frames"
         )
-        click.echo(
-            f"    and detected manipulation artifacts in {fake_frames} frames."
-        )
+        click.echo(f"    and detected manipulation artifacts in {fake_frames} frames.")
         if indicator.score > 0.7:
-            click.echo(
-                "    High detection rate across frames indicates systematic"
-            )
-            click.echo(
-                "    face manipulation consistent with deepfake generation."
-            )
+            click.echo("    High detection rate across frames indicates systematic")
+            click.echo("    face manipulation consistent with deepfake generation.")
         elif indicator.score > 0.3:
-            click.echo(
-                "    Moderate detection suggests possible manipulation."
-            )
-            click.echo(
-                "    Manual review of flagged frames is recommended."
-            )
+            click.echo("    Moderate detection suggests possible manipulation.")
+            click.echo("    Manual review of flagged frames is recommended.")
         else:
-            click.echo(
-                "    Low detection rate suggests authentic facial content."
-            )
+            click.echo("    Low detection rate suggests authentic facial content.")
 
     elif indicator.name == "temporal_consistency":
         click.echo("")
         click.echo("    EXPLANATION:")
         if indicator.detected:
-            click.echo(
-                "    Frame-to-frame predictions show HIGH VARIANCE, indicating"
-            )
-            click.echo(
-                "    inconsistent manipulation or detection uncertainty."
-            )
-            click.echo(
-                "    This may suggest partial manipulation or edge cases."
-            )
+            click.echo("    Frame-to-frame predictions show HIGH VARIANCE, indicating")
+            click.echo("    inconsistent manipulation or detection uncertainty.")
+            click.echo("    This may suggest partial manipulation or edge cases.")
         else:
-            click.echo(
-                "    Frame-to-frame predictions are CONSISTENT, indicating"
-            )
-            click.echo(
-                "    the model has high agreement across the video."
-            )
+            click.echo("    Frame-to-frame predictions are CONSISTENT, indicating")
+            click.echo("    the model has high agreement across the video.")
             if any(f.confidence > 0.5 for f in result.frame_results):
-                click.echo(
-                    "    Consistent high scores strongly suggest deepfake."
-                )
+                click.echo("    Consistent high scores strongly suggest deepfake.")
             else:
-                click.echo(
-                    "    Consistent low scores suggest authentic video."
-                )
+                click.echo("    Consistent low scores suggest authentic video.")
 
     elif indicator.name == "overall_confidence":
         click.echo("")
         click.echo("    EXPLANATION:")
-        click.echo(
-            f"    Combined score from all frames: {indicator.score:.1%}"
-        )
-        click.echo(
-            "    Formula: 70% mean score + 30% max score across frames."
-        )
+        click.echo(f"    Combined score from all frames: {indicator.score:.1%}")
+        click.echo("    Formula: 70% mean score + 30% max score across frames.")
         if indicator.detected:
-            click.echo(
-                "    Score EXCEEDS threshold - classified as FAKE."
-            )
+            click.echo("    Score EXCEEDS threshold - classified as FAKE.")
         else:
-            click.echo(
-                "    Score BELOW threshold - classified as NOT FAKE."
-            )
+            click.echo("    Score BELOW threshold - classified as NOT FAKE.")
 
 
 def print_result_json(result, video_path: str, processing_time: float) -> None:
