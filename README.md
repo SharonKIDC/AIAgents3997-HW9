@@ -9,7 +9,7 @@ DeepFake Video Detector analyzes video files to determine if they contain AI-gen
 ## Key Features
 
 - **Multiple Format Support**: Analyze MP4, AVI, MOV, MKV, and WebM videos
-- **Pre-trained Models**: Uses EfficientNet-B4 for accurate detection
+- **Pre-trained Models**: Uses ViT-based deepfake detector (83%+ accuracy)
 - **Face Detection**: MTCNN-based face detection and tracking
 - **Detailed Reasoning**: Explains why a video was classified as fake or real
 - **Configurable Thresholds**: Adjust sensitivity for your use case
@@ -119,117 +119,50 @@ deepfake-detector analyze video.mp4 --json
 
 ## Configuration
 
-### Environment Variables
-
-Copy `.env.example` to `.env` and customize:
+Copy `.env.example` to `.env` for secrets, and edit `config.yaml` for settings:
 
 ```bash
 cp .env.example .env
 ```
 
-Key variables:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DEFAULT_MODEL` | Detection model | `efficientnet` |
-| `CONFIDENCE_THRESHOLD` | Fake detection threshold | `0.5` |
-| `NUM_FRAMES_TO_ANALYZE` | Frames to sample | `30` |
-| `USE_GPU` | Enable GPU acceleration | `true` |
-
-See [docs/CONFIG.md](./docs/CONFIG.md) for complete configuration reference.
-
-### Configuration File
-
-Edit `config.yaml` for persistent settings:
-
-```yaml
-detection:
-  model: vit-deepfake  # recommended model (83%+ accuracy)
-  confidence_threshold: 0.5
-  num_frames: 30
-
-output:
-  include_reasoning: true
-  format: text
-```
+For complete configuration reference including all environment variables, CLI options, and model selection, see [docs/CONFIG.md](./docs/CONFIG.md).
 
 ## How It Works
 
 1. **Frame Extraction**: Samples frames evenly across the video
 2. **Face Detection**: Identifies faces using MTCNN
-3. **Classification**: Analyzes face regions with EfficientNet-B4
+3. **Classification**: Analyzes face regions with ViT-based model
 4. **Aggregation**: Combines per-frame results into overall verdict
 5. **Reasoning**: Compiles detected indicators into explanation
 
-## Supported Detection Indicators
+For detailed architecture, see [docs/Architecture.md](./docs/Architecture.md).
 
-| Indicator | Description |
-|-----------|-------------|
-| Face Manipulation | AI-generated or swapped face regions |
-| Temporal Inconsistency | Flickering or unnatural frame transitions |
-| Boundary Artifacts | Edge blending around manipulated areas |
-| GAN Fingerprints | Frequency-domain artifacts from generation |
+## Expected Results
+
+For detailed output examples, performance benchmarks, and edge case handling, see [docs/EXPECTED_RESULTS.md](./docs/EXPECTED_RESULTS.md).
 
 ## Troubleshooting
 
-### Common Issues
+**Common issues:**
+- Model download fails → Set `MODEL_CACHE_DIR` environment variable
+- Out of memory → Use `--device cpu` or reduce `BATCH_SIZE`
+- No faces detected → Ensure video contains visible human faces
 
-**Model download fails:**
-```bash
-# Manually set cache directory
-export MODEL_CACHE_DIR=/path/to/cache
-
-# Or download with retry
-deepfake-detector --download-models
-```
-
-**Out of memory:**
-```bash
-# Reduce batch size
-export BATCH_SIZE=4
-
-# Or use CPU
-deepfake-detector analyze video.mp4 --device cpu
-```
-
-**No faces detected:**
-- Ensure video contains visible human faces
-- Check video isn't corrupted
-- Try a shorter video segment
-
-### Exit Codes
-
-| Code | Meaning |
-|------|---------|
-| 0 | Success (analysis completed) |
-| 1 | Input error (file not found, invalid format) |
-| 2 | Processing error (model loading failed) |
+See [docs/CONFIG.md](./docs/CONFIG.md) for detailed troubleshooting and configuration options.
 
 ## Documentation
 
-- [Configuration Guide](./docs/CONFIG.md)
-- [Architecture](./docs/Architecture.md)
-- [Security Guidelines](./docs/SECURITY.md)
-- [Product Requirements](./docs/PRD.md)
-- [Contributing](./docs/CONTRIBUTING.md)
-
-## Project Structure
-
-```
-deepfake-detector/
-├── src/deepfake_detector/    # Main package
-│   ├── models/               # Detection models
-│   ├── analyzers/            # Video analysis
-│   └── utils/                # Utilities
-├── tests/                    # Test suite
-├── docs/                     # Documentation
-├── config/                   # Configuration
-└── results/                  # Output storage
-```
+- [Configuration Guide](./docs/CONFIG.md) - Environment variables, CLI options, model selection
+- [Expected Results](./docs/EXPECTED_RESULTS.md) - Output examples, benchmarks
+- [Architecture](./docs/Architecture.md) - System design, components
+- [Research](./docs/RESEARCH.md) - Model evaluation, experiments
+- [Security Guidelines](./docs/SECURITY.md) - Security considerations
+- [Product Requirements](./docs/PRD.md) - Feature specifications
+- [Contributing](./docs/CONTRIBUTING.md) - Development setup
 
 ## Contributing
 
-We welcome contributions! Please see [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for guidelines.
+We welcome contributions! See [CONTRIBUTING.md](./docs/CONTRIBUTING.md) for development setup and guidelines.
 
 ## License
 

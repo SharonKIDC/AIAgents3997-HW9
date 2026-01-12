@@ -124,6 +124,8 @@ Configuration is applied in this order (later overrides earlier):
 | `vit-deepfake` | ViT-based HuggingFace model (recommended) | Fast | 83%+ |
 | `efficientnet` | EfficientNet-B0 based (legacy) | Fast | ~50% (untrained) |
 
+For detailed model comparison, evaluation experiments, and research methodology, see [RESEARCH.md](RESEARCH.md).
+
 ### Model Cache
 
 Models are downloaded and cached locally:

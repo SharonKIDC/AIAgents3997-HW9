@@ -321,21 +321,7 @@ class AggregatedResult:
 
 ### Local Installation
 
-```bash
-# Clone repository
-git clone <repo-url>
-cd deepfake-detector
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate
-
-# Install package
-pip install -e ".[dev]"
-
-# Download models (automatic on first run)
-deepfake-detector --download-models
-```
+For installation instructions, see the [README](../README.md#installation).
 
 ### Docker Deployment
 
