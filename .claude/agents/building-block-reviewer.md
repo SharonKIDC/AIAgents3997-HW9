@@ -18,7 +18,37 @@
 - constraints:
 
 ## Work performed
-- Review for SRP, separation of concerns, validation, testability, reusability; document prioritized recommendations.
+- Review for SRP, separation of concerns, validation, testability, reusability
+- Document prioritized recommendations
+
+**CRITICAL - Documentation Standards:**
+- All architecture diagrams MUST use Mermaid flowchart syntax
+- NO ASCII box diagrams allowed
+- NO text-based diagrams allowed
+- Use `flowchart TB` or `flowchart LR` for all visual representations
+
+**Example - Correct:**
+```mermaid
+flowchart TB
+    subgraph Stage5[Stage 5: UI Layer]
+        WebUI[Web UI]
+        SDK[Python SDK]
+    end
+    subgraph Stage4[Stage 4: Communication]
+        HTTPClient[MCP HTTP Client]
+    end
+    WebUI --> HTTPClient
+    SDK --> HTTPClient
+```
+
+**Example - INCORRECT (DO NOT USE):**
+```
+┌─────────────────────────────────┐
+│  Stage 5: UI Layer              │
+│  ├─ Web UI                      │
+│  └─ SDK                         │
+└─────────────────────────────────┘
+```
 
 ## Changes
 - Provide diffs.
