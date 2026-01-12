@@ -231,7 +231,7 @@ The proliferation of AI-powered video generation and face-swapping technologies 
 **FR-14**: Support configuration file
 - **Description**: The system shall read settings from configuration file
 - **Acceptance Criteria**:
-  - Reads `config/settings.yaml` for default settings
+  - Reads `config.yaml` for default settings
   - CLI flags override config file settings
   - Environment variables can override config (DEEPFAKE_* prefix)
 

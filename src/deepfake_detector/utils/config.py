@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 class DetectionConfig:
     """Detection-related configuration."""
 
-    model: str = "efficientnet"
+    model: str = "vit-deepfake"
     confidence_threshold: float = 0.5
     num_frames: int = 30
     sample_rate: int = 10
@@ -112,7 +112,7 @@ def load_config(config_path: Optional[str] = None) -> Config:
     Priority (highest to lowest):
     1. Environment variables
     2. Custom config file (if provided)
-    3. Default config file (config/settings.yaml)
+    3. Default config file (config.yaml)
     4. Built-in defaults
 
     Args:
@@ -147,8 +147,8 @@ def _load_yaml_config(config_path: Optional[str] = None) -> Optional[dict]:
     # Default config locations
     paths_to_try.extend(
         [
-            Path("config/settings.yaml"),
-            Path("config/settings.yml"),
+            Path("config.yaml"),
+            Path("config.yml"),
             Path.home() / ".deepfake-detector" / "config.yaml",
         ]
     )

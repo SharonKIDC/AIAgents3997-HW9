@@ -140,11 +140,11 @@ See [docs/CONFIG.md](./docs/CONFIG.md) for complete configuration reference.
 
 ### Configuration File
 
-Edit `config/settings.yaml` for persistent settings:
+Edit `config.yaml` for persistent settings:
 
 ```yaml
 detection:
-  model: efficientnet
+  model: vit-deepfake  # recommended model (83%+ accuracy)
   confidence_threshold: 0.5
   num_frames: 30
 

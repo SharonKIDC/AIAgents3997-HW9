@@ -5,19 +5,19 @@
 DeepFake Detector uses a layered configuration system:
 
 1. **Default values** - Built into the application
-2. **Configuration file** - `config/settings.yaml`
-3. **Environment variables** - Override via `DEEPFAKE_*` prefix
+2. **Configuration file** - `config.yaml`
+3. **Environment variables** - Override settings
 4. **CLI flags** - Highest priority overrides
 
 ## Configuration Files
 
-### config/settings.yaml
+### config.yaml
 
 The main configuration file with default settings:
 
 ```yaml
 detection:
-  model: efficientnet        # Detection model to use
+  model: vit-deepfake        # Detection model to use (recommended)
   confidence_threshold: 0.5  # Threshold for fake classification
   num_frames: 30             # Number of frames to analyze
   sample_rate: 10            # Sample every Nth frame
@@ -65,7 +65,7 @@ All configuration can be overridden via environment variables with the `DEEPFAKE
 |----------|-------------|---------|
 | `HUGGINGFACE_TOKEN` | HuggingFace API token for model downloads | (none) |
 | `MODEL_CACHE_DIR` | Directory to cache model weights | `./models/cache` |
-| `DEFAULT_MODEL` | Default detection model | `efficientnet` |
+| `DEFAULT_MODEL` | Default detection model | `vit-deepfake` |
 | `MAX_VIDEO_DURATION` | Maximum video duration in seconds | `300` |
 | `FRAME_SAMPLE_RATE` | Process every Nth frame | `10` |
 | `NUM_FRAMES_TO_ANALYZE` | Total frames to analyze | `30` |
@@ -90,7 +90,7 @@ Options:
   -t, --threshold FLOAT     Confidence threshold [default: 0.5]
   -n, --num-frames INT      Number of frames to analyze [default: 30]
   -s, --sample-rate INT     Frame sampling rate [default: 10]
-  -m, --model TEXT          Detection model [default: efficientnet]
+  -m, --model TEXT          Detection model [default: vit-deepfake]
   -d, --device TEXT         Compute device (cpu/cuda/cuda:N)
   -o, --output TEXT         Output format (text/json)
   -v, --verbose             Enable verbose output
@@ -106,7 +106,7 @@ Configuration is applied in this order (later overrides earlier):
 ```
 1. Built-in defaults
    ↓
-2. config/settings.yaml
+2. config.yaml
    ↓
 3. Custom config file (--config)
    ↓
@@ -121,9 +121,8 @@ Configuration is applied in this order (later overrides earlier):
 
 | Model | Description | Speed | Accuracy |
 |-------|-------------|-------|----------|
-| `efficientnet` | EfficientNet-B4 based | Fast | High |
-| `xception` | Xception based | Medium | High |
-| `ensemble` | Multiple models | Slow | Highest |
+| `vit-deepfake` | ViT-based HuggingFace model (recommended) | Fast | 83%+ |
+| `efficientnet` | EfficientNet-B0 based (legacy) | Fast | ~50% (untrained) |
 
 ### Model Cache
 
