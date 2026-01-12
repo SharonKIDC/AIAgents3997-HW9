@@ -33,27 +33,148 @@ def print_banner() -> None:
 
 
 def print_result_text(result, video_path: str, processing_time: float) -> None:
-    """Print detection result in text format."""
+    """Print detection result in text format with detailed explanations."""
     click.echo("")
-    click.echo("=" * 50)
+    click.echo("=" * 60)
+    click.echo("                    DETECTION RESULTS")
+    click.echo("=" * 60)
 
+    # Verdict with color
     if result.verdict == "FAKE":
-        click.secho(f"Verdict: {result.verdict}", fg="red", bold=True)
+        click.secho(f"  Verdict: {result.verdict}", fg="red", bold=True)
+        click.echo("")
+        click.secho(
+            "  This video shows signs of AI manipulation or deepfake generation.",
+            fg="red",
+        )
     else:
-        click.secho(f"Verdict: {result.verdict}", fg="green", bold=True)
+        click.secho(f"  Verdict: {result.verdict}", fg="green", bold=True)
+        click.echo("")
+        click.secho(
+            "  This video appears to be authentic with no manipulation detected.",
+            fg="green",
+        )
 
-    click.echo(f"Confidence: {result.confidence:.1%}")
-    click.echo("=" * 50)
+    click.echo("")
+    click.echo(f"  Confidence: {result.confidence:.1%}")
+    click.echo("=" * 60)
     click.echo("")
 
-    click.echo("Reasoning:")
+    # Detailed Evidence Section
+    click.secho("EVIDENCE ANALYSIS:", bold=True)
+    click.echo("-" * 60)
+
     for indicator in result.indicators:
-        status = "+" if indicator.detected else "-"
-        click.echo(f"  [{status}] {indicator.name}: {indicator.description}")
+        click.echo("")
+        if indicator.detected:
+            click.secho(f"  [DETECTED] {indicator.name.upper()}", fg="yellow", bold=True)
+        else:
+            click.secho(f"  [OK] {indicator.name.upper()}", fg="green")
+
+        click.echo(f"    Score: {indicator.score:.1%}")
+        click.echo(f"    {indicator.description}")
+
+        # Add detailed explanation for each indicator
+        _print_indicator_explanation(indicator, result)
 
     click.echo("")
-    click.echo(f"Analyzed: {len(result.frame_results)} frames from {video_path}")
-    click.echo(f"Processing time: {processing_time:.2f}s")
+    click.echo("-" * 60)
+
+    # Summary section
+    click.secho("ANALYSIS SUMMARY:", bold=True)
+    click.echo(f"  - Video analyzed: {video_path}")
+    click.echo(f"  - Frames processed: {len(result.frame_results)}")
+    click.echo(f"  - Processing time: {processing_time:.2f} seconds")
+    click.echo(f"  - Model: vit-deepfake (ViT-based HuggingFace detector)")
+    click.echo("")
+
+    # Interpretation guide
+    click.secho("HOW TO INTERPRET:", bold=True)
+    click.echo("  - Confidence 0-30%:   Likely AUTHENTIC")
+    click.echo("  - Confidence 30-50%:  UNCERTAIN, manual review recommended")
+    click.echo("  - Confidence 50-70%:  Likely MANIPULATED")
+    click.echo("  - Confidence 70-100%: High confidence DEEPFAKE")
+    click.echo("")
+
+
+def _print_indicator_explanation(indicator, result) -> None:
+    """Print detailed explanation for each indicator."""
+    if indicator.name == "face_manipulation":
+        total_frames = len(result.frame_results)
+        fake_frames = sum(1 for f in result.frame_results if f.confidence > 0.5)
+        click.echo("")
+        click.echo("    EXPLANATION:")
+        click.echo(
+            f"    The ViT (Vision Transformer) model analyzed {total_frames} frames"
+        )
+        click.echo(
+            f"    and detected manipulation artifacts in {fake_frames} frames."
+        )
+        if indicator.score > 0.7:
+            click.echo(
+                "    High detection rate across frames indicates systematic"
+            )
+            click.echo(
+                "    face manipulation consistent with deepfake generation."
+            )
+        elif indicator.score > 0.3:
+            click.echo(
+                "    Moderate detection suggests possible manipulation."
+            )
+            click.echo(
+                "    Manual review of flagged frames is recommended."
+            )
+        else:
+            click.echo(
+                "    Low detection rate suggests authentic facial content."
+            )
+
+    elif indicator.name == "temporal_consistency":
+        click.echo("")
+        click.echo("    EXPLANATION:")
+        if indicator.detected:
+            click.echo(
+                "    Frame-to-frame predictions show HIGH VARIANCE, indicating"
+            )
+            click.echo(
+                "    inconsistent manipulation or detection uncertainty."
+            )
+            click.echo(
+                "    This may suggest partial manipulation or edge cases."
+            )
+        else:
+            click.echo(
+                "    Frame-to-frame predictions are CONSISTENT, indicating"
+            )
+            click.echo(
+                "    the model has high agreement across the video."
+            )
+            if any(f.confidence > 0.5 for f in result.frame_results):
+                click.echo(
+                    "    Consistent high scores strongly suggest deepfake."
+                )
+            else:
+                click.echo(
+                    "    Consistent low scores suggest authentic video."
+                )
+
+    elif indicator.name == "overall_confidence":
+        click.echo("")
+        click.echo("    EXPLANATION:")
+        click.echo(
+            f"    Combined score from all frames: {indicator.score:.1%}"
+        )
+        click.echo(
+            "    Formula: 70% mean score + 30% max score across frames."
+        )
+        if indicator.detected:
+            click.echo(
+                "    Score EXCEEDS threshold - classified as FAKE."
+            )
+        else:
+            click.echo(
+                "    Score BELOW threshold - classified as NOT FAKE."
+            )
 
 
 def print_result_json(result, video_path: str, processing_time: float) -> None:
