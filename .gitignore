@@ -136,16 +136,9 @@ bandit-report.json
 *.log
 test-results/
 
-# Video files (too large for git)
-*.mp4
-*.avi
-*.mov
-*.mkv
-*.webm
+# Video files (large datasets - exclude by default)
+# Note: data/ directory is tracked for test samples
 test_videos/
-
-# Dataset directory (downloaded videos)
-data/
 
 # Results cache
 results/*.json
